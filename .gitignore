@@ -1,0 +1,18 @@
+# local cache files
+*.DS_Store
+**/__pycache__/
+*.pyc
+*.pyo
+
+# tmp files
+*.tmp/
+*.log
+*.bak
+*.swp
+
+# configs
+*src//.streamlit/config.toml
+
+# editors
+.vscode
+.idea
