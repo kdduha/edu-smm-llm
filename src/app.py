@@ -49,14 +49,15 @@ def generate_plan(chat_model: ChatOpenAI, params: dict) -> list:
     dates = [(today + datetime.timedelta(days=i)).isoformat() for i in range(params['num_days'])]
     base = {k: v for k, v in params.items()}
     prompt = (
-        "Generate a detailed SMM content plan as JSON only. "
-        f"Using sequential dates starting from today ({dates[0]}) for {params['num_days']} days. "
-        f"Based on parameters: platforms={params['platforms']}, topics={params['topics']}, sources={params['sources']}, notes={params['notes']}. "
-        "Output strictly a JSON array of objects (double quotes), each with keys: "
-        "day (YYYY-MM-DD), platform, title, content_type, description, source. "
-        "Descriptions should be detailed (at least 2-3 sentences). "
-        "Respond with no extra text, wrap JSON in ```json ... ``` code block."
-    )
+    "Generate a detailed SMM content plan as JSON only. "
+    f"Using sequential dates starting from today ({dates[0]}) for {params['num_days']} days. "
+    f"Based on parameters: platforms={params['platforms']}, topics={params['topics']}, sources={params['sources']}, notes={params['notes']}. "
+    "Output strictly a JSON array of objects (double quotes), each with keys: "
+    "day (YYYY-MM-DD), platform, title, content_type, description, source. "
+    "Descriptions should be detailed (at least 2-3 sentences). "
+    "Respond with no extra text, wrap JSON in ```json ... ``` code block. "
+)
+
     response = chat_model.invoke([HumanMessage(content=prompt)])
     raw = response.content
     match = re.search(r"```json\s*(\[.*?\])\s*```", raw, re.S)
