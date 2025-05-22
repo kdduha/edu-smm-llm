@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import src.init as init
+from langchain.schema import HumanMessage
 import json
 import re
 import ast
@@ -58,11 +59,11 @@ if ai_submitted:
         f"Based on parameters: platforms={platforms}, topics={[t.strip() for t in topics.split(',') if t.strip()]}, sources={[s.strip() for s in sources.split(',') if s.strip()]}, notes={user_notes}. "
         "Output strictly a JSON array of objects (double quotes), each with keys: "
         "day (YYYY-MM-DD), platform, title, content_type, description, source. "
-        "Descriptions should be detailed (at least 2-3 sentences). "
+        "The post should be detailed (at least 2-3 sentences). It should be interesting and engaging for the audience and ready for publishing."
         "Respond with no extra text, wrap JSON in ```json ... ``` code block. "
     )
     with st.spinner("Generating with AI..."):
-        response = chat_model.invoke([init.HumanMessage(content=prompt)])
+        response = chat_model.invoke([HumanMessage(content=prompt)])
         raw = response.content
         match = re.search(r"```json\s*(\[.*?\])\s*```", raw, re.S)
         json_str = match.group(1) if match else raw

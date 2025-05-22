@@ -87,13 +87,40 @@ st.markdown('<div class="legend">' +
 if "events" not in st.session_state:
     st.session_state["events"] = []  # Each event: {day, platform, title, content_type, description, source}
 
-# --- Calendar Controls ---
+# --- Month/Year State ---
 today = datetime.date.today()
-year = st.sidebar.number_input("Year", min_value=2020, max_value=2100, value=today.year)
-month = st.sidebar.number_input("Month", min_value=1, max_value=12, value=today.month)
+if "calendar_year" not in st.session_state:
+    st.session_state["calendar_year"] = today.year
+if "calendar_month" not in st.session_state:
+    st.session_state["calendar_month"] = today.month
+
+year = st.session_state["calendar_year"]
+month = st.session_state["calendar_month"]
+
+# --- Month/Year Controls ---
+col_left, col_center, col_right = st.columns([2, 3, 1])
+with col_left:
+    if st.button("←", key="prev_month"):
+        if month == 1:
+            st.session_state["calendar_month"] = 12
+            st.session_state["calendar_year"] -= 1
+        else:
+            st.session_state["calendar_month"] -= 1
+with col_center:
+    st.markdown(
+        f"<div style='font-size:1.5em;font-weight:bold'>{calendar.month_name[month]} {year}</div>",
+        unsafe_allow_html=True,
+    )
+with col_right:
+    if st.button("→", key="next_month"):
+        if month == 12:
+            st.session_state["calendar_month"] = 1
+            st.session_state["calendar_year"] += 1
+        else:
+            st.session_state["calendar_month"] += 1
 
 # --- Calendar Grid ---
-st.title(f"{calendar.month_name[month]} {year}")
+st.title("")  # Remove old title
 cal = calendar.Calendar()
 days = list(cal.itermonthdays(year, month))
 
@@ -138,7 +165,7 @@ if "selected_day" in st.session_state:
         for event in events:
             st.markdown(f"### {event['title']} ({event['platform']})")
             st.markdown(f"**Format:** {event['content_type']}")
-            st.markdown(f"**Description:** {event['description']}")
+            st.markdown(f"**Post text:** {event['description']}")
             st.markdown(f"**Source:** {event['source']}")
             st.markdown("---")
     if st.button("Close day details"):
